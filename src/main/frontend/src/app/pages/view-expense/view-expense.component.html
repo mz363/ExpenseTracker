@@ -1,0 +1,125 @@
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+<div class="page" style="width: 100%;">
+<br>
+<div class="container">
+    <div style="float: left; padding-bottom: 10px;">
+        <label id="cashflowPage" style="font-size: 25px; display:none; color:navy">Cash Flow</label>
+        <label id="incomePage" style="font-size: 25px; display:none; color:navy">Income</label>
+        <label id="expensePage" style="font-size: 25px; display:none; color:navy">Expense</label>
+    </div>
+    <div style="float: right; padding-top: 10px;">
+        <a routerLink="/add-expense" id="cashflowRoute"><span id="cashflowLabel" style="padding: 10px; font-size: 15px; border:0px solid; color: navy;">Cash Flow</span></a>
+        <a routerLink="/add-expense" id="incomeRoute"><span id="incomeLabel" style="padding: 10px; font-size: 15px; border:0px solid; color:navy;">Income</span></a>
+        <a routerLink="/add-expense" id="expenseRoute"><span id="expenseLabel" style="padding: 10px; font-size: 15px; border:0px solid; color:navy;">Expenses</span></a>
+    </div>
+</div>
+
+<div class="container">
+
+<div class="container" style="height:100%; width: 100%; white-space: nowrap; border-bottom: 1px solid; border-top: 1px solid;">
+    <div style="float: left; padding: 20px;">
+        <button class="btn btn-primary" type="button" (click)="init(); changeApply();">All Expenses</button>
+    </div>
+    <div style="float: right;">
+        <form>
+        <div class="form-group" style="display: inline-block; padding-top: 20px; padding-bottom: 20px; padding-right: 20px">
+            <button class="btn btn-primary" (click)="init();" type="submit" name="apply" id="apply" width=10%>
+                APPLY
+            </button>
+        </div>
+        
+        <div style="display: inline-block; padding: 10px;">
+
+            <select class="form-control" name="timeFrame" id="timeFrame" width=10% [(ngModel)]="apply">
+                <option>This Month</option>
+                <option>This Week</option>
+                <option>YTD</option>
+                <option>Daily Over</option>
+                <option>Weekly Over</option>
+                <option>Montly Over</option>
+            </select>
+        </div>
+        <div style="display: inline-block;">
+            <div style="display: inline-block; width:45%">
+                <input required type="date" style="width:100%"/>
+            </div>
+            <div style="display: inline-block;">
+                <label> To </label>
+            </div>
+            <div style="display: inline-block; width:45%">
+                <input required type="date" style="width:100%"/>
+            </div>
+
+        </div>
+        </form>
+
+    </div>
+</div>
+
+<div class="chart-container" style="white-space: nowrap;">    
+    <div style="position: relative; width:40vw; display:inline-block; right:10%"><canvas id="canvasDoughnut"></canvas></div>
+    <div style="position: relative; height:37.3vh; width:17vw; display:inline-block; right:20%; overflow: scroll;">
+        <table class="table table-striped">
+            <tbody>
+                <tr *ngFor="let cat of CategoryData; let i=index;">
+                    <td>{{CategoryData[i]}}</td>
+                    <td align="right">- ${{CostData[i]}}</td>
+                  </tr>
+            </tbody>
+        </table>
+    </div>
+    <div style="position: relative; width:40vw; display:inline-block; right:10%; padding-top:30px"><canvas id="canvasLine"></canvas></div>
+</div>
+
+<br>
+
+<div style="white-space: nowrap;">
+    <h1>Spent over this time last month</h1>
+
+    <div class="search" style="width:80%; display: inline-block; ">
+        <input type="text" class="search-query form-control" placeholder="Search Expense Categories" [(ngModel)]="category"  name="expenseCategory"  style="width:45%; display: inline-block; text-align: left;"/>
+        <span class="input-group-btn" style="display: inline-block;">
+            <button class="btn btn-danger" type="button" (click)="getExpensesByCategory()">
+                <span class=" glyphicon glyphicon-search"></span>
+            </button>
+        </span>
+    </div>
+    <div class="input-group-btn2" style="display: inline-block; text-align: right;">
+        <button class="btn btn-danger" id="deleteButton" type="button" (click)="deleteToggle = false; hideDelete(id);"><span class="glyphicon glyphicon-remove"></span> Delete Expenses</button>
+        <button class="btn btn-success" style="display: none;" id="saveButton" type="button" (click)="deleteToggle = true; hideSave(id); init();"><span class="glyphicon glyphicon-save"></span> Save</button>
+    </div>
+</div>
+
+<div class="container" style="overflow: scroll; height: 500px;">
+    <div class="custyle"> 
+    <table class="table table-striped custab" style="width: 100%">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Tag</th>
+            <th>Cost</th>
+            <th [hidden]="deleteToggle">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let expense of expenses; let i=index">
+            <td>{{expense.id}}</td>
+            <td>{{dateFormatted[i]}}</td>
+            <td>{{expense.category}}</td>
+            <td>{{expense.description}}</td>
+            <td>{{expense.tag}}</td>
+            <td>- ${{expense.cost}}</td>
+            <td [hidden]="deleteToggle" class="text-center"><button class="btn btn-danger btn-xs" (click)="deleteExpense(expense.id, expense.category);"><span class="glyphicon glyphicon-remove"></span> Delete</button></td>
+          </tr>
+    </tbody>
+    </table>
+    </div>
+</div>
+</div>
